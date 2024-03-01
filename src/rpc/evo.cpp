@@ -658,7 +658,7 @@ static UniValue protx_register_common_wrapper(const JSONRPCRequest& request,
 
     // paramIdx is now for hostnameAndPort
     if (request.params[paramIdx].get_str() != "") {
-        if (!Lookup(request.params[paramIdx].get_str().c_str(), ptx.addr, Params().GetDefaultPort(), false)) {
+        if (!Lookup(request.params[paramIdx].get_str().c_str(), ptx.addr, Params().GetDefaultPort(), g_dns_lookup)) {
             throw std::runtime_error(strprintf("invalid network address %s", request.params[paramIdx].get_str()));
         }
     }
