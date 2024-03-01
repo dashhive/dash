@@ -1429,6 +1429,7 @@ static bool CheckService(const ProTx& proTx, TxValidationState& state)
     }
 
     static int mainnetDefaultPort = CreateChainParams(CBaseChainParams::MAIN)->GetDefaultPort();
+    // DON'T HARD CODE IT, DUH!
     if (Params().NetworkIDString() == CBaseChainParams::MAIN) {
         if (proTx.addr.GetPort() != mainnetDefaultPort) {
             return state.Invalid(TxValidationResult::TX_BAD_SPECIAL, "bad-protx-ipaddr-port");

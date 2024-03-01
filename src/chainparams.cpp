@@ -238,6 +238,7 @@ public:
         pchMessageStart[1] = 0x0c;
         pchMessageStart[2] = 0x6b;
         pchMessageStart[3] = 0xbd;
+        // magic numbers and ports here
         nDefaultPort = 9999;
         nDefaultPlatformP2PPort = 26656;
         nDefaultPlatformHTTPPort = 443;
@@ -431,6 +432,7 @@ public:
         pchMessageStart[1] = 0xe2;
         pchMessageStart[2] = 0xca;
         pchMessageStart[3] = 0xff;
+        // more magic ports
         nDefaultPort = 19999;
         nDefaultPlatformP2PPort = 22000;
         nDefaultPlatformHTTPPort = 22001;
@@ -603,6 +605,7 @@ public:
         pchMessageStart[1] = 0xca;
         pchMessageStart[2] = 0xff;
         pchMessageStart[3] = 0xce;
+        // more magic ports
         nDefaultPort = 19799;
         nDefaultPlatformP2PPort = 22100;
         nDefaultPlatformHTTPPort = 22101;
@@ -851,6 +854,7 @@ public:
         pchMessageStart[1] = 0xc1;
         pchMessageStart[2] = 0xb7;
         pchMessageStart[3] = 0xdc;
+        // more magic ports
         nDefaultPort = 19899;
         nDefaultPlatformP2PPort = 22200;
         nDefaultPlatformHTTPPort = 22201;

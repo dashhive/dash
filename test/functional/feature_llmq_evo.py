@@ -231,11 +231,11 @@ class LLMQEvoNodesTest(DashTestFramework):
                 break
         assert collateral_vout is not None
 
-        ipAndPort = '127.0.0.1:%d' % p2p_port(len(self.nodes))
+        hostnameAndPort = 'localhost:%d' % p2p_port(len(self.nodes))
         operatorReward = len(self.nodes)
 
         try:
-            self.nodes[0].protx('register_evo', collateral_txid, collateral_vout, ipAndPort, owner_address, bls['public'], voting_address, operatorReward, reward_address, funds_address, True)
+            self.nodes[0].protx('register_evo', collateral_txid, collateral_vout, hostnameAndPort, owner_address, bls['public'], voting_address, operatorReward, reward_address, funds_address, True)
             # this should never succeed
             assert False
         except:

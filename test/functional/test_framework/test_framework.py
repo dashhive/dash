@@ -1223,21 +1223,21 @@ class DashTestFramework(BitcoinTestFramework):
                 break
         assert collateral_vout is not None
 
-        ipAndPort = '127.0.0.1:%d' % node_p2p_port
+        hostnameAndPort = 'localhost:%d' % node_p2p_port
         operatorReward = idx
 
         protx_result = None
         if evo:
-            protx_result = self.nodes[0].protx("register_evo", collateral_txid, collateral_vout, ipAndPort, owner_address, bls['public'], voting_address, operatorReward, reward_address, platform_node_id, platform_p2p_port, platform_http_port, funds_address, True)
+            protx_result = self.nodes[0].protx("register_evo", collateral_txid, collateral_vout, hostnameAndPort, owner_address, bls['public'], voting_address, operatorReward, reward_address, platform_node_id, platform_p2p_port, platform_http_port, funds_address, True)
         else:
-            protx_result = self.nodes[0].protx("register", collateral_txid, collateral_vout, ipAndPort, owner_address, bls['public'], voting_address, operatorReward, reward_address, funds_address, True)
+            protx_result = self.nodes[0].protx("register", collateral_txid, collateral_vout, hostnameAndPort, owner_address, bls['public'], voting_address, operatorReward, reward_address, funds_address, True)
 
         self.wait_for_instantlock(protx_result, self.nodes[0])
         tip = self.nodes[0].generate(1)[0]
         self.sync_all(self.nodes)
 
         assert_equal(self.nodes[0].getrawtransaction(protx_result, 1, tip)['confirmations'], 1)
-        mn_info = MasternodeInfo(protx_result, owner_address, voting_address, reward_address, operatorReward, bls['public'], bls['secret'], collateral_address, collateral_txid, collateral_vout, ipAndPort, evo)
+        mn_info = MasternodeInfo(protx_result, owner_address, voting_address, reward_address, operatorReward, bls['public'], bls['secret'], collateral_address, collateral_txid, collateral_vout, hostnameAndPort, evo)
         self.mninfo.append(mn_info)
 
         mn_type_str = "EvoNode" if evo else "MN"
@@ -1307,16 +1307,16 @@ class DashTestFramework(BitcoinTestFramework):
         votingAddr = ownerAddr
 
         port = p2p_port(len(self.nodes) + idx)
-        ipAndPort = '127.0.0.1:%d' % port
+        hostnameAndPort = 'localhost:%d' % port
         operatorReward = idx
 
         submit = (idx % 4) < 2
 
         if register_fund:
-            protx_result = self.nodes[0].protx('register_fund', address, ipAndPort, ownerAddr, bls['public'], votingAddr, operatorReward, rewardsAddr, address, submit)
+            protx_result = self.nodes[0].protx('register_fund', address, hostnameAndPort, ownerAddr, bls['public'], votingAddr, operatorReward, rewardsAddr, address, submit)
         else:
             self.nodes[0].generate(1)
-            protx_result = self.nodes[0].protx('register', txid, collateral_vout, ipAndPort, ownerAddr, bls['public'], votingAddr, operatorReward, rewardsAddr, address, submit)
+            protx_result = self.nodes[0].protx('register', txid, collateral_vout, hostnameAndPort, ownerAddr, bls['public'], votingAddr, operatorReward, rewardsAddr, address, submit)
 
         if submit:
             proTxHash = protx_result
@@ -1326,9 +1326,9 @@ class DashTestFramework(BitcoinTestFramework):
         if operatorReward > 0:
             self.nodes[0].generate(1)
             operatorPayoutAddress = self.nodes[0].getnewaddress()
-            self.nodes[0].protx('update_service', proTxHash, ipAndPort, bls['secret'], operatorPayoutAddress, address)
+            self.nodes[0].protx('update_service', proTxHash, hostnameAndPort, bls['secret'], operatorPayoutAddress, address)
 
-        self.mninfo.append(MasternodeInfo(proTxHash, ownerAddr, votingAddr, rewardsAddr, operatorReward, bls['public'], bls['secret'], address, txid, collateral_vout, ipAndPort, False))
+        self.mninfo.append(MasternodeInfo(proTxHash, ownerAddr, votingAddr, rewardsAddr, operatorReward, bls['public'], bls['secret'], address, txid, collateral_vout, hostnameAndPort, False))
 
         self.log.info("Prepared MN %d: collateral_txid=%s, collateral_vout=%d, protxHash=%s" % (idx, txid, collateral_vout, proTxHash))
 

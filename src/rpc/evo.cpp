@@ -67,14 +67,15 @@ static RPCArg GetRpcArg(const std::string& strParamName)
                 "If not specified, payoutAddress is the one that is going to be used.\n"
                 "The private key belonging to this address must be known in your wallet."}
         },
-        {"ipAndPort",
-            {"ipAndPort", RPCArg::Type::STR, RPCArg::Optional::NO,
-                "IP and port in the form \"IP:PORT\". Must be unique on the network.\n"
+        // ip or hostname, and port
+        {"hostnameAndPort",
+            {"hostnameAndPort", RPCArg::Type::STR, RPCArg::Optional::NO,
+                "Host in the form \"HOSTNAME:PORT\". Must be unique on the network.\n"
                 "Can be set to an empty string, which will require a ProUpServTx afterwards."}
         },
-        {"ipAndPort_update",
-            {"ipAndPort", RPCArg::Type::STR, RPCArg::Optional::NO,
-                "IP and port in the form \"IP:PORT\". Must be unique on the network."}
+        {"hostnameAndPort_update",
+            {"hostnameAndPort", RPCArg::Type::STR, RPCArg::Optional::NO,
+                "Host in the form \"HOSTNAME:PORT\". Must be unique on the network."}
         },
         {"operatorKey",
             {"operatorKey", RPCArg::Type::STR, RPCArg::Optional::NO,
@@ -367,7 +368,7 @@ static void protx_register_fund_help(const JSONRPCRequest& request, bool legacy)
         + HELP_REQUIRING_PASSPHRASE,
         {
             GetRpcArg("collateralAddress"),
-            GetRpcArg("ipAndPort"),
+            GetRpcArg("hostnameAndPort"),
             GetRpcArg("ownerAddress"),
             legacy ? GetRpcArg("operatorPubKey_register_legacy") : GetRpcArg("operatorPubKey_register"),
             GetRpcArg("votingAddress_register"),
@@ -402,7 +403,7 @@ static void protx_register_help(const JSONRPCRequest& request, bool legacy)
         {
             GetRpcArg("collateralHash"),
             GetRpcArg("collateralIndex"),
-            GetRpcArg("ipAndPort"),
+            GetRpcArg("hostnameAndPort"),
             GetRpcArg("ownerAddress"),
             legacy ? GetRpcArg("operatorPubKey_register_legacy") : GetRpcArg("operatorPubKey_register"),
             GetRpcArg("votingAddress_register"),
@@ -436,7 +437,7 @@ static void protx_register_prepare_help(const JSONRPCRequest& request, bool lega
         {
             GetRpcArg("collateralHash"),
             GetRpcArg("collateralIndex"),
-            GetRpcArg("ipAndPort"),
+            GetRpcArg("hostnameAndPort"),
             GetRpcArg("ownerAddress"),
             legacy ? GetRpcArg("operatorPubKey_register_legacy") : GetRpcArg("operatorPubKey_register"),
             GetRpcArg("votingAddress_register"),
@@ -489,7 +490,7 @@ static void protx_register_fund_evo_help(const JSONRPCRequest& request)
             HELP_REQUIRING_PASSPHRASE,
         {
             GetRpcArg("collateralAddress"),
-            GetRpcArg("ipAndPort"),
+            GetRpcArg("hostnameAndPort"),
             GetRpcArg("ownerAddress"),
             GetRpcArg("operatorPubKey_register"),
             GetRpcArg("votingAddress_register"),
@@ -523,7 +524,7 @@ static void protx_register_evo_help(const JSONRPCRequest& request)
         {
             GetRpcArg("collateralHash"),
             GetRpcArg("collateralIndex"),
-            GetRpcArg("ipAndPort"),
+            GetRpcArg("hostnameAndPort"),
             GetRpcArg("ownerAddress"),
             GetRpcArg("operatorPubKey_register"),
             GetRpcArg("votingAddress_register"),
@@ -556,7 +557,7 @@ static void protx_register_prepare_evo_help(const JSONRPCRequest& request)
         {
             GetRpcArg("collateralHash"),
             GetRpcArg("collateralIndex"),
-            GetRpcArg("ipAndPort"),
+            GetRpcArg("hostnameAndPort"),
             GetRpcArg("ownerAddress"),
             GetRpcArg("operatorPubKey_register"),
             GetRpcArg("votingAddress_register"),
@@ -619,11 +620,12 @@ static UniValue protx_register_common_wrapper(const JSONRPCRequest& request,
     size_t paramIdx = 0;
 
     CMutableTransaction tx;
-    tx.nVersion = 3;
+    tx.nVersion = 3; // EVO SEND!!
     tx.nType = TRANSACTION_PROVIDER_REGISTER;
 
     const bool use_legacy = isV19active ? specific_legacy_bls_scheme : true;
 
+    // This is the type that packs the IP presently
     CProRegTx ptx;
     ptx.nType = mnType;
 
@@ -654,8 +656,9 @@ static UniValue protx_register_common_wrapper(const JSONRPCRequest& request,
         wallet->LockCoin(ptx.collateralOutpoint);
     }
 
+    // paramIdx is now for hostnameAndPort
     if (request.params[paramIdx].get_str() != "") {
-        if (!Lookup(request.params[paramIdx].get_str().c_str(), ptx.addr, Params().GetDefaultPort(), false)) {
+        if (!Lookup(request.params[paramIdx].get_str().c_str(), ptx.addr, Params().GetDefaultPort(), g_dns_lookup)) {
             throw std::runtime_error(strprintf("invalid network address %s", request.params[paramIdx].get_str()));
         }
     }
@@ -856,7 +859,7 @@ static void protx_update_service_help(const JSONRPCRequest& request)
         + HELP_REQUIRING_PASSPHRASE,
         {
             GetRpcArg("proTxHash"),
-            GetRpcArg("ipAndPort_update"),
+            GetRpcArg("hostnameAndPort_update"),
             GetRpcArg("operatorKey"),
             GetRpcArg("operatorPayoutAddress"),
             GetRpcArg("feeSourceAddress"),
@@ -880,7 +883,7 @@ static void protx_update_service_evo_help(const JSONRPCRequest& request)
             HELP_REQUIRING_PASSPHRASE,
         {
             GetRpcArg("proTxHash"),
-            GetRpcArg("ipAndPort_update"),
+            GetRpcArg("hostnameAndPort_update"),
             GetRpcArg("operatorKey"),
             GetRpcArg("platformNodeID"),
             GetRpcArg("platformP2PPort"),

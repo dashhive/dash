@@ -36,6 +36,8 @@ CNetAddr::BIP155Network CNetAddr::GetBIP155Network() const
         return BIP155Network::I2P;
     case NET_CJDNS:
         return BIP155Network::CJDNS;
+    case NET_HOSTNAME:
+        return BIP155Network::HOSTNAME;
     case NET_INTERNAL:   // should have been handled before calling this function
     case NET_UNROUTABLE: // m_net is never and should not be set to NET_UNROUTABLE
     case NET_MAX:        // m_net is never and should not be set to NET_MAX
@@ -88,6 +90,14 @@ bool CNetAddr::SetNetFromBIP155Network(uint8_t possible_bip155_net, size_t addre
         throw std::ios_base::failure(
             strprintf("BIP155 CJDNS address with length %u (should be %u)", address_size,
                       ADDR_CJDNS_SIZE));
+    case BIP155Network::HOSTNAME:
+        if (address_size == ADDR_HOSTNAME_SIZE) {
+            m_net = NET_HOSTNAME;
+            return true;
+        }
+        throw std::ios_base::failure(
+            strprintf("BIP155 HOSTNAME address with length %u (should be %u)", address_size,
+                      ADDR_HOSTNAME_SIZE));
     }
 
     // Don't throw on addresses with unknown network ids (maybe from the future).
@@ -123,6 +133,9 @@ void CNetAddr::SetIP(const CNetAddr& ipIn)
         break;
     case NET_CJDNS:
         assert(ipIn.m_addr.size() == ADDR_CJDNS_SIZE);
+        break;
+    case NET_HOSTNAME:
+        assert(ipIn.m_addr.size() <= ADDR_HOSTNAME_SIZE);
         break;
     case NET_INTERNAL:
         assert(ipIn.m_addr.size() == ADDR_INTERNAL_SIZE);

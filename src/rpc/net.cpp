@@ -87,7 +87,7 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
                 {
                     {
                     {RPCResult::Type::NUM, "id", "Peer index"},
-                    {RPCResult::Type::STR, "addr", "(host:port) The IP address and port of the peer"},
+                    {RPCResult::Type::STR, "addr", "(hostname:port) The Hostname (or IP address) and port of the peer"},
                     {RPCResult::Type::STR, "addrbind", "(ip:port) Bind address of the connection to the peer"},
                     {RPCResult::Type::STR, "addrlocal", "(ip:port) Local address as reported by the peer"},
                     {RPCResult::Type::STR, "network", "Network (" + Join(GetNetworkNames(/* append_unroutable */ true), ", ") + ")"},
@@ -461,7 +461,7 @@ static UniValue GetNetworksInfo()
     UniValue networks(UniValue::VARR);
     for (int n = 0; n < NET_MAX; ++n) {
         enum Network network = static_cast<enum Network>(n);
-        if (network == NET_UNROUTABLE || network == NET_CJDNS || network == NET_INTERNAL) continue;
+        if (network == NET_UNROUTABLE || network == NET_HOSTNAME || network == NET_CJDNS || network == NET_INTERNAL) continue;
         proxyType proxy;
         UniValue obj(UniValue::VOBJ);
         GetProxy(network, proxy);

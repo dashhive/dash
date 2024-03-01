@@ -22,6 +22,7 @@ class CBlockIndex;
 class CCoinsViewCache;
 class TxValidationState;
 
+// CProRegTx is defined here
 class CProRegTx
 {
 public:
