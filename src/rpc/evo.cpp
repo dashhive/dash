@@ -620,11 +620,12 @@ static UniValue protx_register_common_wrapper(const JSONRPCRequest& request,
     size_t paramIdx = 0;
 
     CMutableTransaction tx;
-    tx.nVersion = 3;
+    tx.nVersion = 3; // EVO SEND!!
     tx.nType = TRANSACTION_PROVIDER_REGISTER;
 
     const bool use_legacy = isV19active ? specific_legacy_bls_scheme : true;
 
+    // This is the type that packs the IP presently
     CProRegTx ptx;
     ptx.nType = mnType;
 
@@ -655,6 +656,7 @@ static UniValue protx_register_common_wrapper(const JSONRPCRequest& request,
         wallet->LockCoin(ptx.collateralOutpoint);
     }
 
+    // paramIdx is now for hostnameAndPort
     if (request.params[paramIdx].get_str() != "") {
         if (!Lookup(request.params[paramIdx].get_str().c_str(), ptx.addr, Params().GetDefaultPort(), false)) {
             throw std::runtime_error(strprintf("invalid network address %s", request.params[paramIdx].get_str()));

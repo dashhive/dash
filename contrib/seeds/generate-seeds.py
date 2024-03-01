@@ -40,6 +40,7 @@ class BIP155Network(Enum):
     TORV3 = 4
     I2P = 5
     CJDNS = 6
+    HOSTNAME = 1993
 
 def name_to_bip155(addr):
     '''Convert address string to BIP155 (networkID, addr) tuple.'''

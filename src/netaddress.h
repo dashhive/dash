@@ -60,6 +60,9 @@ enum Network {
     /// CJDNS
     NET_CJDNS,
 
+    /// Hostname
+    NET_HOSTNAME,
+
     /// A set of addresses that represent the hash of a string or FQDN. We use
     /// them in CAddrMan to keep track of which DNS seeds were used.
     NET_INTERNAL,
@@ -105,6 +108,10 @@ static constexpr size_t ADDR_I2P_SIZE = 32;
 /// Size of CJDNS address (in bytes).
 static constexpr size_t ADDR_CJDNS_SIZE = 16;
 
+/// Size of Hostname (in bytes). This is the maximum length of all labels and
+/// dots as per RFC 1035 Size limits (Section 2.3.4.)
+static constexpr size_t ADDR_HOSTNAME_SIZE = 255;
+
 /// Size of "internal" (NET_INTERNAL) address (in bytes).
 static constexpr size_t ADDR_INTERNAL_SIZE = 10;
 
@@ -114,6 +121,7 @@ static constexpr uint16_t I2P_SAM31_PORT{0};
 /**
  * Network address.
  */
+// CNetAddr is defined here for IPv6 or IPv4
 class CNetAddr
 {
 protected:
@@ -164,7 +172,11 @@ public:
      * @returns Whether the operation was successful.
      * @see CNetAddr::IsTor(), CNetAddr::IsI2P()
      */
+    // Hmmm... looks like hostnames (DNS) *can* fit after all?
     bool SetSpecial(const std::string& addr);
+
+    // What might this look like??
+    bool SetHostname(const std::string& addr);
 
     bool IsBindAny() const; // INADDR_ANY equivalent
     bool IsIPv4() const;    // IPv4 mapped address (::FFFF:0:0/96, 0.0.0.0/0)
@@ -187,6 +199,7 @@ public:
     bool IsTor() const;
     bool IsI2P() const;
     bool IsCJDNS() const;
+    bool IsHostname() const;
     bool IsLocal() const;
     bool IsRoutable() const;
     bool IsInternal() const;
@@ -282,6 +295,8 @@ private:
         TORV3 = 4,
         I2P = 5,
         CJDNS = 6,
+        // add Hostname support here (and rename the enum?)
+        HOSTNAME = 1993,
     };
 
     /**
@@ -339,6 +354,7 @@ private:
         case NET_ONION:
         case NET_I2P:
         case NET_CJDNS:
+        case NET_HOSTNAME:
             break;
         case NET_UNROUTABLE:
         case NET_MAX:
@@ -518,6 +534,7 @@ public:
 };
 
 /** A combination of a network address (CNetAddr) and a (TCP) port */
+// CService is defined here
 class CService : public CNetAddr
 {
 protected:

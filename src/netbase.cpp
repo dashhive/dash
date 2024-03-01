@@ -90,6 +90,7 @@ enum Network ParseNetwork(const std::string& net_in) {
     if (net == "ipv4") return NET_IPV4;
     if (net == "ipv6") return NET_IPV6;
     if (net == "onion") return NET_ONION;
+    if (net == "hostname") return NET_HOSTNAME;
     if (net == "tor") {
         LogPrintf("Warning: net name 'tor' is deprecated and will be removed in the future. You should use 'onion' instead.\n");
         return NET_ONION;
@@ -109,6 +110,7 @@ std::string GetNetworkName(enum Network net)
     case NET_ONION: return "onion";
     case NET_I2P: return "i2p";
     case NET_CJDNS: return "cjdns";
+    case NET_HOSTNAME: return "hostname";
     case NET_INTERNAL: return "internal";
     case NET_MAX: assert(false);
     } // no default case, so the compiler can warn about missing cases
@@ -121,7 +123,7 @@ std::vector<std::string> GetNetworkNames(bool append_unroutable)
     std::vector<std::string> names;
     for (int n = 0; n < NET_MAX; ++n) {
         const enum Network network{static_cast<Network>(n)};
-        if (network == NET_UNROUTABLE || network == NET_CJDNS || network == NET_INTERNAL) continue;
+        if (network == NET_UNROUTABLE || network == NET_HOSTNAME || network == NET_CJDNS || network == NET_INTERNAL) continue;
         names.emplace_back(GetNetworkName(network));
     }
     if (append_unroutable) {
