@@ -238,6 +238,7 @@ public:
         pchMessageStart[1] = 0x0c;
         pchMessageStart[2] = 0x6b;
         pchMessageStart[3] = 0xbd;
+        // magic numbers and ports here
         nDefaultPort = 9999;
         nDefaultPlatformP2PPort = 26656;
         nDefaultPlatformHTTPPort = 443;
